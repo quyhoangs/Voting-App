@@ -47,7 +47,12 @@
                         <a href="#" class="hover:underline">A random title can go here</a>
                     </h4>
                     <div class="text-gray-600 mt-3 line-clamp-3">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum possimus quasi reprehenderit earum incidunt. Ad reprehenderit repudiandae dolorem ducimus modi accusamus beatae perferendis? Eum eligendi nulla aliquam numquam! Nobis, tempore rerum autem accusamus perspiciatis laudantium at excepturi sint placeat nulla beatae qui aliquam quibusdam corrupti vel dolor praesentium quam dolore itaque deleniti quod in ut earum. Cum fuga ea molestias nesciunt soluta sint maxime, magnam dolorum reprehenderit autem, vel ipsa? Vitae vel quos quaerat, fugit in reiciendis alias perspiciatis esse numquam facere cum veniam beatae voluptatem eos amet vero laborum error. Dolor distinctio temporibus iure, repellendus porro molestiae deleniti quibusdam?
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum possimus quasi reprehenderit earum incidunt. 
+                        Ad reprehenderit repudiandae dolorem ducimus modi accusamus beatae perferendis? Eum eligendi nulla aliquam numquam! Nobis,
+                         tempore rerum autem accusamus perspiciatis laudantium at excepturi sint placeat nulla beatae qui aliquam quibusdam corrupti vel dolor praesentium 
+                         quam dolore itaque deleniti quod in ut earum. Cum fuga ea molestias nesciunt soluta sint maxime, magnam dolorum reprehenderit autem, 
+                         vel ipsa? Vitae vel quos quaerat, fugit in reiciendis alias perspiciatis esse numquam facere cum veniam beatae voluptatem eos amet vero laborum error. 
+                         Dolor distinctio temporibus iure, repellendus porro molestiae deleniti quibusdam?
                     </div>
 
                     <div class="flex items-center justify-between mt-6">
@@ -72,6 +77,7 @@
                 </div>
             </div>
         </div> <!-- end idea-container -->
+
         <div class="idea-container hover:shadow-card transition duration-150 ease-in bg-white rounded-xl flex cursor-pointer">
             <div class="border-r border-gray-100 px-5 py-8">
                 <div class="text-center">
@@ -117,6 +123,7 @@
                 </div>
             </div>
         </div> <!-- end idea-container -->
+
         <div class="idea-container hover:shadow-card transition duration-150 ease-in bg-white rounded-xl flex cursor-pointer">
             <div class="border-r border-gray-100 px-5 py-8">
                 <div class="text-center">
@@ -162,6 +169,7 @@
                 </div>
             </div>
         </div> <!-- end idea-container -->
+
         <div class="idea-container hover:shadow-card transition duration-150 ease-in bg-white rounded-xl flex cursor-pointer">
             <div class="border-r border-gray-100 px-5 py-8">
                 <div class="text-center">
@@ -207,6 +215,7 @@
                 </div>
             </div>
         </div> <!-- end idea-container -->
+
         <div class="idea-container hover:shadow-card transition duration-150 ease-in bg-white rounded-xl flex cursor-pointer">
             <div class="border-r border-gray-100 px-5 py-8">
                 <div class="text-center">
@@ -253,4 +262,5 @@
             </div>
         </div> <!-- end idea-container -->
     </div> <!-- end ideas-container -->
+
 </x-app-layout>
