@@ -634,6 +634,10 @@ select {
   margin-left: 1rem;
   margin-right: 1rem;
 }
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
 .ml-3 {
   margin-left: 0.75rem;
 }
@@ -690,6 +694,12 @@ select {
 }
 .-mr-2 {
   margin-right: -0.5rem;
+}
+.ml-6 {
+  margin-left: 1.5rem;
+}
+.ml-22 {
+  margin-left: 5.5rem;
 }
 .block {
   display: block;
@@ -792,6 +802,12 @@ select {
 }
 .w-6 {
   width: 1.5rem;
+}
+.w-32 {
+  width: 8rem;
+}
+.w-36 {
+  width: 9rem;
 }
 .max-w-xl {
   max-width: 36rem;
@@ -909,6 +925,11 @@ select {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
+.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
 .overflow-hidden {
   overflow: hidden;
@@ -1187,6 +1208,9 @@ select {
 .leading-tight {
   line-height: 1.25;
 }
+.leading-snug {
+  line-height: 1.375;
+}
 .tracking-wider {
   letter-spacing: 0.05em;
 }
@@ -1338,6 +1362,50 @@ select {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+/* vertical line to the left of the comments */
+.comments-container::before {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: -40px;
+    content: "";
+    width: 3px;
+    height: 100%;
+    background: #edf0f5;
+}
+/* horizontal line to the left of the comments */
+.comment-container::before {
+    position: absolute;
+    display: block;
+    top: 57px;
+    content: "";
+    width: 23px;
+    height: 3px;
+    background: #edf0f5;
+    left: -40px;
+}
+/* remove last vertical line */
+.comment-container:last-child::after {
+    position: absolute;
+    display: block;
+    top: 60px;
+    left: -40px;
+    content: "";
+    width: 3px;
+    height: calc(100% - 60px);
+    background: #f7f8fc;
+}
+.is-admin::before {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border-radius: 38px;
+    border: 7px solid white;
+    box-shadow: 4px 4px 15px 0 rgba(36, 37, 38, 0.08);
+    left: -58px;
+    background: #8b60ed;
+    opacity: 1;
 }
 .hover\:border-gray-300:hover {
   --tw-border-opacity: 1;
@@ -1615,4 +1683,3 @@ select {
     padding-right: 2rem;
   }
 }
-
