@@ -99,7 +99,7 @@
                             </form>
                         </div>
             </div>
-                <div class="w-175">
+                <div class="w-175" >
                     <nav class="flex items-center justify-between text-xs">
                         <ul class="flex uppercase font-semibold border-b-4 pb-3 space-x-10">
                             <li><a href="#" class="border-b-4 pb-3 border-blue">All Ideas (87)</a></li>
@@ -116,7 +116,13 @@
                     <div class="mt-8">
                         {{ $slot }}
                     </div>
+
+                    <div id="app">
+                        <example-component></example-component>
+                    </div>
+
                 </div>
             </main>
+        <script src="{{ asset('js/app.js') }}" defer></script>
     </body>
 </html>
