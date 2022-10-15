@@ -16,6 +16,7 @@
 
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
+        @livewireStyles
     </head>
     <body class="font-sans bg-gray-background text-gray-900 text-sm py-4  px-4">
             <header class="flex items-center justify-between px-8 py-4">
@@ -125,5 +126,6 @@
                 </div>
             </main>
         <script src="{{ asset('js/app.js') }}" defer></script>
+        @livewireScripts
     </body>
 </html>
