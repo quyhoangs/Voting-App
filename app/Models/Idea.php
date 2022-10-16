@@ -21,7 +21,8 @@ class Idea extends Model
      */
     public function sluggable(): array
     {
-        //Tải về gói SLug , Set 1 field là slug
+        //Requied gói slug ,tạo 1 filed slug trong bảng
+        //và set tên filed làm slug trong bảng
         return [
             'slug' => [
                 'source' => 'title'
@@ -33,5 +34,11 @@ class Idea extends Model
     {
         //1 idea belongs to 1 user
         return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        //1 idea belongs to 1 category
+        return $this->belongsTo(Category::class);
     }
 }
