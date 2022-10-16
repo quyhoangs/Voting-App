@@ -118,10 +118,10 @@
                     <div class="mt-8">
                         {{ $slot }}
                     </div>
-
+{{--
                     <div id="app">
                         <example-component></example-component>
-                    </div>
+                    </div> --}}
 
                 </div>
             </main>
