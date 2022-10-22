@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Idea;
+use App\Models\Vote;
 use Illuminate\Http\Request;
 
 class IdeaController extends Controller
@@ -14,14 +15,17 @@ class IdeaController extends Controller
      */
     public function index()
     {
-        return view('idea.index', [
-            'ideas' => Idea::with('category', 'user', 'status')
-
-            // Tránh việc query nhiều lần (N+1 problem)
-            //Lấy số lượng vote của mỗi idea
+        $idea= Idea::with('category', 'user', 'status')
+                ->addSelect(['voted_by_user' => Vote::select('id')
+                                                ->where('user_id', auth()->id())
+                                                ->whereColumn('idea_id', 'ideas.id')
+                ])
             ->withCount('votes')
             ->orderBy('id', 'desc')
-            ->simplePaginate(Idea::PAGINATION_COUNT)
+            ->simplePaginate(Idea::PAGINATION_COUNT);
+        // dd($idea);
+        return view('idea.index', [
+            'ideas' => $idea
         ]);
     }
 
