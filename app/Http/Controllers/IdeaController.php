@@ -15,7 +15,11 @@ class IdeaController extends Controller
     public function index()
     {
         return view('idea.index', [
-            'ideas' => Idea::with('category', 'user','status')
+            'ideas' => Idea::with('category', 'user', 'status')
+
+            // Tránh việc query nhiều lần (N+1 problem)
+            //Lấy số lượng vote của mỗi idea
+            ->withCount('votes')
             ->orderBy('id', 'desc')
             ->simplePaginate(Idea::PAGINATION_COUNT)
         ]);
@@ -42,16 +46,15 @@ class IdeaController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Idea  $idea
-     * @return \Illuminate\Http\Response
-     */
+/*
+    $idea->votes() // Trả về một collection các vote của idea,truy vấn db, không bị n+1 problem
+    $idea->votes // Trả về số lượng vote của idea , bị n+1 problem
+*/
     public function show(Idea $idea)
     {
         return view('idea.show', [
             'idea' => $idea,
+            'votesCount' => $idea->votes()->count(),
         ]);
     }
 
