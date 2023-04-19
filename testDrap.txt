@@ -1,0 +1,182 @@
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+
+class MyRequest extends FormRequest
+{
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        $errorCodes = [];
+
+        foreach ($errors->keys() as $key) {
+            $errorCode = $this->getErrorCodeForField($key);
+            $errorMessage = $errors->first($key);
+            $errorCodes[] = ['code_custom' => $errorCode, 'message' => $errorMessage];
+        }
+
+        $response = [
+            'status' => 400,
+            'message' => 'Bad Request',
+            'errors' => $errorCodes,
+            'extra_option_1' => 'value_1',
+            'extra_option_2' => 'value_2',
+            // ...
+        ];
+
+        throw new HttpResponseException(response()->json($response, JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
+    }
+
+    private function getErrorCodeForField($fieldName)
+    {
+        // Mapping error codes to field names
+        $errorCodes = [
+            'field1' => 1001,
+            'field2' => 1002,
+            'field3' => 1003,
+            // ...
+        ];
+
+        return $errorCodes[$fieldName] ?? 0;
+    }
+
+    public function rules()
+    {
+        return [
+            'field1' => 'required',
+            'field2' => 'required',
+            'field3' => 'required',
+            // ...
+        ];
+    }
+}
+
+
+Hoặc 
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+
+class MyRequest extends FormRequest
+{
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        $errorCodes = [];
+
+        foreach ($errors->keys() as $key) {
+            $errorCode = $this->getErrorCodeForField($key);
+            $errorMessage = $errors->first($key);
+            $errorCodes[] = ['code_custom' => $errorCode, 'message' => $errorMessage];
+        }
+
+        throw new HttpResponseException(response()->json(['errors' => $errorCodes], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
+    }
+
+    private function getErrorCodeForField($fieldName)
+    {
+        // Mapping error codes to field names
+        $errorCodes = [
+            'field1' => 1001,
+            'field2' => 1002,
+            'field3' => 1003,
+            // ...
+        ];
+
+        return $errorCodes[$fieldName] ?? 0;
+    }
+
+    public function rules()
+    {
+        return [
+            'field1' => 'required',
+            'field2' => 'required',
+            'field3' => 'required',
+            // ...
+        ];
+    }
+}
+
+
+namespace App\Helpers;
+
+use Illuminate\Support\Facades\Log;
+
+class ApiLogger
+{
+    public static function startLog($functionName, $params, $ip)
+    {
+        Log::info('START LOG - Function name: ' . $functionName . ', Params: ' . json_encode($params) . ', IP: ' . $ip);
+    }
+
+    public static function endLog($functionName, $params, $ip)
+    {
+        Log::info('END LOG - Function name: ' . $functionName . ', Params: ' . json_encode($params) . ', IP: ' . $ip);
+    }
+
+    public static function logInfo($message, $functionName, $params, $ip)
+    {
+        Log::info('INFO - Function name: ' . $functionName . ', Params: ' . json_encode($params) . ', IP: ' . $ip . ', Message: ' . $message);
+    }
+
+    public static function logWarning($message, $functionName, $params, $ip)
+    {
+        Log::warning('WARNING - Function name: ' . $functionName . ', Params: ' . json_encode($params) . ', IP: ' . $ip . ', Message: ' . $message);
+    }
+
+    public static function logError($message, $functionName, $params, $ip)
+    {
+        Log::error('ERROR - Function name: ' . $functionName . ', Params: ' . json_encode($params) . ', IP: ' . $ip . ', Message: ' . $message);
+    }
+}
+
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use App\Helpers\ApiLogger;
+
+class YourRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        $functionName = __METHOD__;
+        $params = $this->all();
+        $ip = $this->ip();
+
+        ApiLogger::startLog($functionName, $params, $ip);
+
+        return [
+            'param1' => 'required',
+            'param2' => 'numeric',
+        ];
+    }
+
+    public function withValidator($validator)
+    {
+        if ($validator->fails()) {
+            $functionName = __METHOD__;
+            $params = $this->all();
+            $ip = $this->ip();
+            $errors = $validator->errors();
+
+            ApiLogger::logWarning('Validation errors', $functionName, $params, $ip);
+            ApiLogger::logInfo('Validation errors', $functionName, $params, $ip);
+        } else {
+            $functionName = __METHOD__;
+            $params = $this->all();
+            $ip = $this->ip();
+
+            ApiLogger::logInfo('Validation passed',
