@@ -217,4 +217,53 @@ class YourController extends Controller
     }
 }
 
-            
+  http_errors là một tùy chọn (option) trong Guzzle HTTP Client. Khi http_errors được đặt là false, Guzzle sẽ không ném ra các ngoại lệ (exceptions) khi gặp phản hồi HTTP có mã trạng thái lỗi (không phải 2xx). Thay vào đó, phản hồi sẽ được trả về dưới dạng đối tượng Response.
+
+Nếu không có tùy chọn này hoặc được đặt là true, khi gặp một phản hồi HTTP có mã trạng thái lỗi, Guzzle sẽ ném ra một ngoại lệ GuzzleHttp\Exception\RequestException, bạn sẽ phải xử lý nó bằng cách bắt ngoại lệ.
+
+Việc đặt http_errors là false có thể hữu ích trong một số trường hợp, ví dụ như khi bạn muốn xử lý phản hồi HTTP lỗi một cách tự do, hoặc khi phản hồi HTTP lỗi là một phản hồi hợp lệ trong trường hợp ngoại lệ. Tuy nhiên, bạn nên cẩn trọng khi sử dụng tùy chọn này, vì nó có thể làm giảm tính bảo mật của ứng dụng nếu không được sử dụng đúng cách.
+
+Trong trường hợp ngoại lệ, khi http_errors được đặt là true, Guzzle sẽ ném ra một ngoại lệ GuzzleHttp\Exception\RequestException. Ngoại lệ này có thể được bắt và xử lý để giải quyết các vấn đề liên quan đến kết nối API.
+
+Ở đây, trong phương thức yourMethod(), chúng ta sử dụng try...catch để bắt ngoại lệ RequestException nếu có lỗi khi gửi yêu cầu tới API. Sau đó, chúng ta có thể xử lý lỗi trong khối catch và đưa ra các biện pháp khắc phục hoặc thông báo cho người dùng.
+
+Vì vậy, bạn nên cẩn thận khi xử lý ngoại lệ trong trường hợp http_errors được đặt là true, vì nó có thể tạo ra lỗi không mong muốn nếu không được xử lý đúng cách.
+
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+
+class YourController extends Controller
+{
+    public function yourMethod()
+    {
+        try {
+            $response = $this->callExternalApi('http://api.example.com/endpoint', 'GET');
+
+            // xử lý kết quả trả về từ API
+        } catch (RequestException $e) {
+            // xử lý lỗi nếu có
+        }
+    }
+
+    private function callExternalApi($url, $method, $data = null)
+    {
+        $client = new Client();
+
+        $options = [
+            'headers' => [
+                // thêm thông tin header nếu cần
+            ],
+            'http_errors' => true,
+        ];
+
+        if ($data) {
+            $options['json'] = $data;
+        }
+
+        $response = $client->request($method, $url, $options);
+
+        return $response;
+    }
+}
+
