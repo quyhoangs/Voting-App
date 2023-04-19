@@ -180,3 +180,41 @@ class YourRequest extends FormRequest
             $ip = $this->ip();
 
             ApiLogger::logInfo('Validation passed',
+            
+            
+            
+            
+            
+use GuzzleHttp\Client;
+
+class YourController extends Controller
+{
+    public function yourMethod()
+    {
+        $response = $this->callExternalApi('http://api.example.com/endpoint', 'GET');
+
+        // xử lý kết quả trả về từ API
+    }
+
+    private function callExternalApi($url, $method, $data = null)
+    {
+        $client = new Client();
+
+        $options = [
+            'headers' => [
+                // thêm thông tin header nếu cần
+            ],
+            'http_errors' => false,
+        ];
+
+        if ($data) {
+            $options['json'] = $data;
+        }
+
+        $response = $client->request($method, $url, $options);
+
+        return $response;
+    }
+}
+
+            
