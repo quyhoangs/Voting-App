@@ -123,11 +123,11 @@ Có thể custom phần trả về XML 1 chút không ví dụ tôi muốn trả
 						
 						
 "<?xml version=""1.0"" encoding=""UTF-8"" ?> 
-<docmail-response>
- <a>123456</smsreqid>
+<tailieu-maill>
+ <a>123456</a>
  <b>1</a>
  <c>22222222222</b>
-</docmail-response>"						
+</tailieu-maille>"						
 						
 						
 					
@@ -152,7 +152,7 @@ public function index()
 
     $jsonResponse = response()->json($data);
 
-    $xmlResponse = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><docmail-response></docmail-response>');
+    $xmlResponse = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><tailieu-maill></tailieu-maill>');
     array_walk_recursive($data, array($xmlResponse, 'addChild'));
     $xmlResponse = $xmlResponse->asXML();
 
@@ -182,15 +182,15 @@ public function index()
 {
     $posts = Post::all();
     $data = [
-        "smsreqid" => "123456",
-        "fnc" => "1",
-        "tel" => "22222222222",
+        "a" => "123456",
+        "b" => "1",
+        "c" => "22222222222",
 
     ];
 
     $acceptHeader = request()->header('Accept');
     if (strpos($acceptHeader, 'application/xml') !== false) {
-        $xmlResponse = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><docmail-response></docmail-response>');
+        $xmlResponse = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><tailieu-docmeo></tailieu-docmeo>');
         array_walk_recursive($data, array($xmlResponse, 'addChild'));
         $response = $xmlResponse->asXML();
         $contentType = 'application/xml; charset=utf-8';
