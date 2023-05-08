@@ -1,3 +1,7 @@
+composer require guzzlehttp/guzzle
+
+
+
 Dưới đây là một ví dụ về cách bạn có thể xây dựng một lớp xử lý API trong Laravel:
 Tạo một file trong thư mục app/Services hoặc app/Libraries, ví dụ: ApiService.php.
 Định nghĩa các phương thức để gọi các API khác nhau. Ví dụ:
@@ -247,8 +251,26 @@ Chúng ta sử dụng dependency injection để inject ApiService vào trong co
 và sau đó sử dụng đối tượng ApiService để gọi các phương thức của API. Nếu có lỗi, chúng ta redirect trở lại trang trước với các thông báo lỗi, 
 nếu không có lỗi, chúng ta trả về view với dữ liệu user.
 
+Nếu bạn không khởi tạo đối tượng ApiService trong constructor của UserController,
+thì bạn có thể khởi tạo nó trực tiếp trong phương thức index() bằng cách sử dụng từ khóa new. Ví dụ:
 
+namespace App\Http\Controllers;
 
+use App\Services\ApiService;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $apiService = new ApiService();
+        $userData = $apiService->getUser($userId);
+        if ($userData['error']) {
+            return redirect()->back()->withErrors([$userData['message']]);
+        }
+        $user = $userData['user'];
+        return view('users.index', compact('user'));
+    }
+}
 
 
 
