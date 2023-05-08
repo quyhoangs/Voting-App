@@ -267,3 +267,17 @@ class YourController extends Controller
     }
 }
 
+use Carbon\Carbon;
+
+$sendDate = Carbon::parse($jobInfo['senddate']);
+$specificDate = Carbon::parse('2023-05-08 12:00:00'); // thời điểm cụ thể muốn kiểm tra
+//$now = Carbon::now();
+
+if ($specificDate->diffInHours($sendDate) > 72) {
+    // Do something if it has been more than 72 hours since the send date
+} else {
+    // Do something else if it has been less than 72 hours since the send date
+}
+
+
+
