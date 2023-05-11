@@ -1,0 +1,102 @@
+public function send($method, $uri, array $options = [], $resultcode = '')
+{
+    $client = new Client();
+    try {
+        $response = $client->request($method, $uri, $options);
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode >= 500 && $statusCode <= 599) {
+            $this->logAccreteException($resultcode);
+        }
+
+        return $this->processResponse($response);
+    } catch (RequestException $e) {
+        $response = $e->getResponse();
+        $error = $response ? $statusCode : $e->getCode();
+        $message = $response ? $response->getReasonPhrase() : $e->getMessage();
+
+        return $this->processError($error, $message);
+    }
+}
+
+private function processResponse(ResponseInterface $response)
+{
+    $contentType = $response->getHeaderLine('Content-Type');
+    $body = $response->getBody();
+
+    if (strpos($contentType, 'application/json') !== false) {
+        $data = json_decode($body, true);
+    } elseif (strpos($contentType, 'text/html') !== false) {
+        $data = (string)$body;
+    } else {
+        $data = $body;
+    }
+
+    return [
+        'error' => null,
+        'message' => null,
+        'data' => $data
+    ];
+}
+
+private function processError($error, $message)
+{
+    return [
+        'error' => $error,
+        'message' => $message,
+        'data' => null
+    ];
+}
+
+private function logAccreteException($resultcode)
+{
+    $logData = 'API名（"%s"）、%s、ステータスコード（"%s"）、%s、状態（"acrete access error"）';
+    Log::channel(CommonConstants::LOG_CHANNEL_EXCEPTION_ACCRETE)->info(
+        sprintf($logData, CommonConstants::API_NAME_GET_SMS_RESULT, $_REQUEST['reqid'])
+    );
+}
+
+----------------Param 
+
+public function getInforDeliveryConfirmationProcess($apiBaseUrl, $token, $securitycode, $messageid, $resultcode) {
+    $response = $this->send(
+      'POST',
+      $apiBaseUrl.'/abc/'.$token,
+      [
+        'headers' => [
+          'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
+        ],
+        'form_params' => [
+          'request_Id' => $token,
+          'password'  => $securitycode,
+          'delivery_Id' => $messageid,
+        ],
+      ],
+      $resultcode
+    );
+
+    if ($response['error']) {
+      return [
+        'error' => $response['error'],
+        'message' => $response['message'],
+        'user' => null
+      ];
+    }
+
+    $accreteData = $response['data'];
+    $accrete = isset($accreteData['user']) ? $accreteData['user'] : null;
+    return [
+      'error' => null,
+      'message' => null,
+      'accrete' => $accrete
+    ];
+}
+
+-----
+$apiBaseUrl = $dataSendAccrete['api_base_url'];
+$token = $dataSendAccrete['token'];
+$securitycode = $dataSendAccrete['securitycode'];
+$messageid = $dataSendAccrete['messageid'];
+$resultcode = $dataSendAccrete['resultcode'];
+
+$result = $this->getInforDeliveryConfirmationProcess($apiBaseUrl, $token, $securitycode, $messageid, $resultcode);
