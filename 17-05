@@ -108,3 +108,33 @@ class abc extends BaseController
     {
         // Check condition to determine if delivery confirmation
         // Return
+        
+  Để khi hàm __handleValidateRequest gặp lỗi thì trả về ngay và dừng lại, bạn có thể sử dụng từ khóa throw để ném ra một ngoại lệ (exception). 
+  Sau đó, trong phần gọi hàm __handleValidateRequest, sử dụng một khối try-catch để bắt và xử lý ngoại lệ đó. Dưới đây là một ví dụ cụ thể:
+
+try {
+    __handleValidateRequest($req);
+} catch (Exception $e) {
+    return ApiResponse::error(Response::HTTP_BAD_REQUEST, $e->getMessage());
+}
+
+Trong hàm __handleValidateRequest, nếu gặp lỗi, bạn có thể tạo một đối tượng Exception và ném ra bằng cách sử dụng từ khóa throw. Ví dụ:
+
+function __handleValidateRequest($req) {
+    if (!$req->has('param1') || !$req->has('param2')) {
+        throw new Exception('Missing required parameters');
+    }
+
+    // Các xử lý khác
+}
+
+Khi __handleValidateRequest gặp lỗi (ví dụ: thiếu các tham số bắt buộc), một ngoại lệ sẽ được ném ra. Trong khối catch,
+ngoại lệ được bắt và bạn có thể trả về một ApiResponse với mã lỗi và thông báo tương ứng.
+Lưu ý rằng bạn cần sử dụng use Exception; ở đầu file hoặc kiểu catch là catch (\Exception $e) để đảm bảo lớp Exception được nhận dạng.      
+        
+        
+        
+        
+        
+        
+        
