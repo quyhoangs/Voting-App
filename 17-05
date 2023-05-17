@@ -1,0 +1,110 @@
+class abc extends BaseController
+{
+    const API_NAME = 'abc';
+
+    public function index(Request $request)
+    {
+        $this->handleValidateRequest($request);
+
+        $job = $this->getJobBySmsreqid($request);
+
+        if (empty($job)) {
+            return $this->handleInvalidJob($request);
+        }
+
+        $jobId = $job['job_id'];
+        $jobInfo = $this->getJobInfo($jobId, $request);
+
+        if (empty($jobInfo)) {
+            return $this->handleInvalidJobInfo($request);
+        }
+
+        $smsreqid = $request->input('smsreqid');
+        $tel = $request->input('tel');
+
+        $data = $this->prepareData($smsreqid, $job, $tel);
+
+        if ($this->shouldHandleRegistrationFail($jobInfo)) {
+            return $this->handleRegistrationFail($data, $smsreqid, $request);
+        }
+
+        if ($this->shouldHandleSendFail($jobInfo)) {
+            return $this->handleSendFail($data, $smsreqid, $request);
+        }
+
+        if ($this->shouldHandleMessageUnsent($jobInfo)) {
+            return $this->handleMessageUnsent($data, $smsreqid, $request);
+        }
+
+        if ($this->shouldHandleDeliveryConfirmation($jobInfo)) {
+            return $this->handleDeliveryConfirmation($data, $smsreqid, $request);
+        }
+
+        try {
+            $accreteData = $this->accessAccreteAPI($jobInfo, $accountInfo);
+
+            if ($accreteData['resultcode'] !== ResultConstants::ACRETE_ACCESS_ERROR) {
+                JobX::saveInforJobFromAccrete($accreteData, $jobInfo['job_id']);
+                return ApiResponse::success(ResultConstants::SUCCEEDED, $data);
+            }
+        } catch (\Exception $e) {
+            // log output
+            return ApiResponse::error(Response::HTTP_INTERNAL_SERVER_ERROR, Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    private function handleValidateRequest($request)
+    {
+        // validate request code goes here
+    }
+
+    private function getJobBySmsreqid($request)
+    {
+        // retrieve job code goes here
+    }
+
+    private function getJobInfo($jobId, $request)
+    {
+        // retrieve job info code goes here
+    }
+
+    private function shouldHandleRegistrationFail($jobInfo)
+    {
+        // Check condition to determine if registration failed
+        // Return true or false based on the condition
+    }
+
+    private function handleRegistrationFail($data, $smsreqid, $request)
+    {
+        // Handle registration failure scenario
+        // Return appropriate response
+    }
+
+    private function shouldHandleSendFail($jobInfo)
+    {
+        // Check condition to determine if send failed
+        // Return true or false based on the condition
+    }
+
+    private function handleSendFail($data, $smsreqid, $request)
+    {
+        // Handle send failure scenario
+        // Return appropriate response
+    }
+
+    private function shouldHandleMessageUnsent($jobInfo)
+    {
+        // Check condition to determine if message unsent
+        // Return true or false based on the condition
+    }
+
+    private function handleMessageUnsent($data, $smsreqid, $request)
+    {
+        // Handle message unsent scenario
+        // Return appropriate response
+    }
+
+    private function shouldHandleDeliveryConfirmation($jobInfo)
+    {
+        // Check condition to determine if delivery confirmation
+        // Return
