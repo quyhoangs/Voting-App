@@ -1,0 +1,271 @@
+Test validate request:
+
+Kiểm tra khi thiếu thông tin reqid.
+Kiểm tra khi smsreqid không hợp lệ.
+Kiểm tra khi smsreqid không đủ độ dài.
+Kiểm tra khi thiếu thông tin tel.
+Kiểm tra khi tel không hợp lệ.
+Kiểm tra khi tel không đủ độ dài.
+Test trường hợp empty($job):
+
+Kiểm tra khi job là rỗng.
+Test trường hợp empty($jobInfo):
+
+Kiểm tra khi jobInfo là rỗng.
+Test trường hợp $jobInfo['entry_status'] và $jobInfo['error_cd']:
+
+Kiểm tra khi entry_status là "ERROR" và error_cd là "Lỗi".
+Test trường hợp $jobInfo['messagestatus']:
+
+Kiểm tra khi messagestatus không rỗng và khác "00000".
+Test trường hợp is_null($jobInfo['senddate']):
+
+Kiểm tra khi senddate là null.
+Test trường hợp now->diffInHours($sendDate) > 90:
+
+Kiểm tra khi senddate cách ngày hiện tại hơn 90 giờ.
+Test trường hợp gọi API Accrete:
+
+Kiểm tra khi gọi API thành công.
+Kiểm tra khi gọi API lỗi.
+Test trường hợp ngoại lệ (Exception):
+
+Kiểm tra khi có ngoại lệ xảy ra.
+
+testValidationFailsIfSmsreqidIsMissing(): Kiểm tra xem khi trường smsreqid bị thiếu, yêu cầu API trả về lỗi và thông báo rằng SMSREQID_NOT_SET.
+testValidationFailsIfSmsreqidIsInvalid(): Kiểm tra xem khi trường smsreqid không hợp lệ (không đúng định dạng), yêu cầu API trả về lỗi và thông báo rằng SMSREQID_INVALID.
+testValidationFailsIfTelIsMissing(): Kiểm tra xem khi trường tel bị thiếu, yêu cầu API trả về lỗi và thông báo rằng TEL_NOT_SET.
+testValidationFailsIfTelIsInvalid(): Kiểm tra xem khi trường tel không hợp lệ (không đúng định dạng), yêu cầu API trả về lỗi và thông báo rằng TEL_INVALID.
+testValidationFailsIfReqidIsMissing(): Kiểm tra xem khi trường reqid bị thiếu, yêu cầu API trả về lỗi và thông báo rằng REQID_NOT_SET.
+testValidationFailsIfReqidIsInvalid(): Kiểm tra xem khi trường reqid không hợp lệ (không đúng định dạng), yêu cầu API trả về lỗi và thông báo rằng REQID_INVALID.
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
+
+class YourControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function testIndexHandlesValidDataAndFoundJobAndMessageInfo()
+    {
+        // Chuẩn bị dữ liệu hợp lệ và công việc được tìm thấy và thông tin tin nhắn được tìm thấy
+
+        $response = $this->get('/your-controller-endpoint');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                // Kiểm tra các trường dữ liệu khác trong response
+            ]);
+    }
+
+    public function testIndexHandlesValidDataAndFoundJobButNotFoundMessageInfo()
+    {
+        // Chuẩn bị dữ liệu hợp lệ và công việc được tìm thấy nhưng không tìm thấy thông tin tin nhắn
+
+        $response = $this->get('/your-controller-endpoint');
+
+        $response->assertStatus(400)
+            ->assertJson([
+                'success' => false,
+                'error' => [
+                    // Kiểm tra thông báo lỗi không tìm thấy thông tin tin nhắn trong response
+                ]
+            ]);
+    }
+
+    public function testIndexHandlesValidDataAndNotFoundJob()
+    {
+        // Chuẩn bị dữ liệu hợp lệ nhưng không tìm thấy công việc
+
+        $response = $this->get('/your-controller-endpoint');
+
+        $response->assertStatus(400)
+            ->assertJson([
+                'success' => false,
+                'error' => [
+                    // Kiểm tra thông báo lỗi không tìm thấy công việc trong response
+                ]
+            ]);
+    }
+}
+
+//TEST TẠO FILE LOG
+
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class LogFileTest extends TestCase
+{
+    public function testLaravelLogExists()
+    {
+        $laravelLogExists = Storage::disk('logs')->exists('laravel.log');
+        $this->assertTrue($laravelLogExists);
+    }
+
+    public function testEndLogExists()
+    {
+        $currentDate = now()->format('Y-m-d');
+        $endLogExists = Storage::disk('logs')->exists("end_$currentDate.log");
+        $this->assertTrue($endLogExists);
+    }
+
+    public function testStartLogExists()
+    {
+        $currentDate = now()->format('Y-m-d');
+        $startLogExists = Storage::disk('logs')->exists("start_$currentDate.log");
+        $this->assertTrue($startLogExists);
+    }
+}
+
+//MOCK DATA
+
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+
+class LogTest extends TestCase
+{
+    public function testHandleValidateRequestLogs()
+    {
+        // Mock the request data
+        $request = $this->createRequestData(); // Create your own test data here
+        
+        // Call the __handleValidateRequest method
+        $this->app->call([$this, '__handleValidateRequest'], compact('request'));
+
+        // Assert that the log entry was created
+        $logChannel = CommonConstants::LOG_CHANNEL_START;
+        $logEntry = 'Nội dung log';
+        $this->assertLogEntryExists($logChannel, $logEntry);
+    }
+
+    public function testIndexLogs()
+    {
+        // Mock the necessary data
+        $request = $this->createRequestData(); // Create your own test data here
+        $jobExists = false; // Set the value based on the condition in your code
+        
+        // Mock the necessary dependencies
+        $this->mock(JobService::class)->shouldReceive('getJobBySmsreqidWithSendResult')->andReturn($jobExists);
+        $this->mock(ApiResponse::class)->shouldReceive('error')->andReturn(null);
+        
+        // Call the index method
+        $this->app->call([$this, 'index'], compact('request'));
+
+        // Assert that the log entry was created
+        $logChannel = CommonConstants::LOG_CHANNEL_END;
+        $logEntry = 'Nội dung log';
+        $this->assertLogEntryExists($logChannel, $logEntry);
+    }
+
+    private function assertLogEntryExists($logChannel, $logEntry)
+    {
+        $logContents = Storage::disk('logs')->get("$logChannel.log");
+        $this->assertStringContainsString($logEntry, $logContents);
+    }
+
+    private function createRequestData()
+    {
+        // Create and return the request data for testing
+        return [
+            'accountInfo' => [
+                'domain' => 'Your_domain',
+            ],
+            'reqid' => 'Your_reqid',
+            'smsreqid' => 'Your_smsreqid',
+            'tel' => 'Your_tel',
+            // Add other necessary request data
+        ];
+    }
+}
+//has data
+
+use PHPUnit\Framework\TestCase;
+
+class YourControllerTest extends TestCase
+{
+    public function testIndex()
+    {
+        // Mock the necessary data
+        $request = $this->createRequestData(); // Create your own test data here
+        $job = // Create a mock or stub of Job that returns the expected result
+
+        // Mock the necessary dependencies
+        $jobServiceMock = $this->mock(Job Service::class);
+        $jobServiceMock->shouldReceive('getJobBymethod')->andReturn($job);
+
+        // Call the index method
+        $yourController = new YourController();
+        $response = $yourController->index($request);
+
+        // Assert that the response is as expected
+        $this->assertEquals(expectedResponse, $response);
+    }
+}
+
+//test log thứ 2 lỗi
+public function testIndexLogs()
+{
+    // Mock the necessary data
+    $request = $this->createRequestData(); // Create your own test data here
+    $jobExists = true; // Set the value based on the condition in your code
+
+    // Mock the necessary dependencies
+    $this->mock(JobService::class)->shouldReceive('getJobBymethod')->andReturn($jobExists);
+    $this->mock(ApiResponse::class)->shouldReceive('error')->andReturn(null);
+
+    // Call the index method
+    $this->app->call([$this, 'index'], compact('request'));
+
+    // Assert that the first log entry was created
+    $logChannelStart = CommonConstants::LOG_CHANNEL_START;
+    $logEntryStart = 'Nội dung log';
+    $this->assertLogEntryExists($logChannelStart, $logEntryStart);
+
+    // Assert that the second log entry was NOT created
+    $logChannelEnd = CommonConstants::LOG_CHANNEL_END;
+    $logEntryEnd = 'Nội dung log';
+    $this->assertLogEntryNotExists($logChannelEnd, $logEntryEnd);
+}
+
+//triển khai theo login controller
+public function testIndex()
+{
+    // Create a mock request with the necessary data
+    $request = $this->createRequestData(); // Create your own test data here
+
+    // Mock the necessary dependencies
+    $this->mock(JobService::class)->shouldReceive('getJobBymethod')->andReturn(null);
+    $this->mock(ApiResponse::class)->shouldReceive('error')->andReturn(null);
+
+    // Call the index method
+    $response = $this->app->call([$this, 'index'], compact('request'));
+
+    // Assert that the error response is returned
+    $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    $this->assertEquals(ResultConstants::SMS1REQID_IN2VALID, $response->getData()['code']);
+    // Assert that the log entry was created
+    $logChannel = CommonConstants::LOG_CHANNEL_END;
+    $logEntry = 'Log content';
+    $this->assertLogEntryExists($logChannel, $logEntry);
+}
+
+public function testHandleValidateRequest()
+{
+    // Create a mock request with the necessary data
+    $request = $this->createRequestData(); // Create your own test data here
+
+    // Call the __handleValidateRequest method
+    $response = $this->app->call([$this, '__handleValidateRequest'], compact('request'));
+
+    // Assert that the error response is returned
+    $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+    $this->assertEquals(ResultConstants::SMSR1EQID_INV2ALID, $response->getData()['code']);
+    // Assert that the log entry was created
+    $logChannel = CommonConstants::LOG_CHANNEL_END;
+    $logEntry = 'Log content';
+    $this->assertLogEntryExists($logChannel, $logEntry);
+}
+
