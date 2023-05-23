@@ -1,6 +1,6 @@
 https://1drv.ms/x/s!AiMIGjBxA-YbgSuzCZn0kU5hP0d5
 Test validate request:
-
+https://1drv.ms/x/s!AiMIGjBxA-YbgSuzCZn0kU5hP0d5?e=7XUrRH
 Kiểm tra khi thiếu thông tin reqid.
 Kiểm tra khi smsreqid không hợp lệ.
 Kiểm tra khi smsreqid không đủ độ dài.
