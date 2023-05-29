@@ -270,3 +270,40 @@ public function testHandleValidateRequest()
     $this->assertLogEntryExists($logChannel, $logEntry);
 }
 
+
+
+use Mockery;
+use App\Services\CronJobService;
+use App\Models\Job;
+
+class YourTestCase extends TestCase
+{
+    public function testyourMethodNameInCronJobSerice()
+    {
+        // Tạo mock object cho lớp CronJobService
+        $mock = Mockery::mock(CronJobService::class);
+
+        // Định nghĩa kỳ vọng: phương thức yourMethodNameInCronJobSerice sẽ trả về một đối tượng Job nếu có dữ liệu
+        $mock->shouldReceive('yourMethodNameInCronJobSerice')
+            ->with('ABC123', 'domain')
+            ->andReturn(Job::create(['ID' => 'ABC123', 'domain' => 'tenmien.com']));
+
+        // Định nghĩa kỳ vọng: phương thức yourMethodNameInCronJobSerice sẽ trả về null nếu không có dữ liệu
+        $mock->shouldReceive('yourMethodNameInCronJobSerice')
+            ->with('DEF456', 'domain')
+            ->andReturn(null);
+
+        // Thực hiện gọi phương thức của service với dữ liệu tồn tại
+        $result1 = $mock->yourMethodNameInCronJobSerice('ABC123', 'domain');
+        // Kiểm tra kết quả
+        $this->assertInstanceOf(Job::class, $result1);
+
+        // Thực hiện gọi phương thức của service với dữ liệu không tồn tại
+        $result2 = $mock->yourMethodNameInCronJobSerice('DEF456', 'domain');
+        // Kiểm tra kết quả
+        $this->assertNull($result2);
+
+        // Hủy mock object
+        Mockery::close();
+    }
+}
