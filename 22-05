@@ -307,3 +307,15 @@ class YourTestCase extends TestCase
         Mockery::close();
     }
 }
+
+//Các cách có thể custom kết quả trả về 
+        $Model = new Model();
+        $Model->id = 1;
+        $Model->requestID = $requestID;
+        $Model->domain = $domain;
+        
+        ->willReturnSelf();
+        ->willReturn($Model);
+        ->willReturn(null);
+        ->andReturn(Mockery::mock('Job'));
+        ->andReturn(Job::create(['smsreqid' => 'ABC123', 'domain' => 'domain']));
