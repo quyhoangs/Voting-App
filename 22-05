@@ -319,3 +319,109 @@ class YourTestCase extends TestCase
         ->willReturn(null);
         ->andReturn(Mockery::mock('Job'));
         ->andReturn(Job::create(['smsreqid' => 'ABC123', 'domain' => 'domain']));
+        
+        
+ use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
+
+class YourControllerTest extends TestCase
+{
+    public function testYourMethod()
+    {
+        // Tạo mock cho phương thức callExternalApi() với trường hợp thành công (trạng thái 200)
+        $mockedResponse = new Response(200, [], '{"data": ["d", "e", "f"]}');
+        $mockedClient = $this->createMock(Client::class);
+        $mockedClient->expects($this->once())
+            ->method('request')
+            ->with('GET', 'http://api.example.com/endpoint')
+            ->willReturn($mockedResponse);
+
+        // Gắn mock vào controller
+        $controller = new YourController();
+        $controller->setHttpClient($mockedClient);
+
+        // Gọi phương thức yourMethod() trong controller
+        $controller->yourMethod();
+
+        // Kiểm tra các xử lý sau khi gọi API thành công
+        // ...
+
+        // Kiểm tra xem có lỗi RequestException nào được ném ra không
+        $this->assertFalse($controller->hasException());
+
+        // Tạo mock cho phương thức callExternalApi() với trường hợp lỗi 400
+        $mockedException = $this->createMock(RequestException::class);
+        $mockedClient = $this->createMock(Client::class);
+        $mockedClient->expects($this->once())
+            ->method('request')
+            ->with('GET', 'http://api.example.com/endpoint')
+            ->willThrowException($mockedException);
+
+        // Gắn mock vào controller
+        $controller->setHttpClient($mockedClient);
+
+        // Gọi phương thức yourMethod() trong controller
+        $controller->yourMethod();
+
+        // Kiểm tra xử lý lỗi 400
+        // ...
+
+        // Kiểm tra xem có lỗi RequestException nào được ném ra không
+        $this->assertTrue($controller->hasException());
+
+        // Tạo mock cho phương thức callExternalApi() với trường hợp ngoại lệ
+        $mockedException = $this->createMock(RequestException::class);
+        $mockedClient = $this->createMock(Client::class);
+        $mockedClient->expects($this->once())
+            ->method('request')
+            ->with('GET', 'http://api.example.com/endpoint')
+            ->willThrowException($mockedException);
+
+        // Gắn mock vào controller
+        $controller->setHttpClient($mockedClient);
+
+        // Xác định rằng ngoại lệ được ném ra từ phương thức yourMethod()
+        $this->expectException(RequestException::class);
+
+        // Gọi phương thức yourMethod() trong controller
+        $controller->yourMethod();
+
+           // Kiểm tra mã trạng thái của phản hồi thành công
+    $statusCode = $mockedResponse->getStatusCode();
+    $this->assertEquals(200, $statusCode);
+
+    // ...
+
+    // Kiểm tra mã trạng thái của phản hồi lỗi 400
+    $this->expectException(RequestException::class);
+    // Xử lý lỗi nếu cần
+
+use Mockery;
+use App\Services\ThirdPartyApiService;
+use Tests\TestCase;
+
+class MyTest extends TestCase
+{
+    public function test_something()
+    {
+        // Tạo một đối tượng mock cho lớp API bên thứ ba
+        $mockApi = Mockery::mock(ThirdPartyApiService::class);
+
+        // Định nghĩa phương thức gọi và kết quả trả về mong muốn
+        $mockApi->shouldReceive('send')->andReturn('Mocked data');
+
+        // Sử dụng đối tượng mock trong test
+        $result = $mockApi->send();
+
+        $this->assertEquals('Mocked data', $result);
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+}
+
