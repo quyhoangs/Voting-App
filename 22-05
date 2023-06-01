@@ -425,3 +425,31 @@ class MyTest extends TestCase
     }
 }
 
+
+1. Muốn so sánh kiểu string hoặc int theo type trong in_array thì thêm true vào đối số thứ 3 của hàm 
+2. Test ngoại lệ trong project chỉ cần gọi 1 method k tồn tại, trỏ vào method với result code không có 
+3. Test ngoại lệ phần call API bên thứ 3 
+    public function testFindNonExistingModel()
+    {
+        $this->expectException(ModelNotFoundException::class);
+
+        // Gọi phương thức hoặc thực hiện hành động có khả năng gây ra ngoại lệ
+        $nonExistingModel = Model::findOrFail(9999);
+    }
+
+    public function testGetUserHandlesExceptionForNonExistingUser()
+    {
+        // Tạo instance của UserController
+        $controller = new UserController();
+
+        // Tạo mock request
+        $request = Request::create('/users/3');
+        $userId = 3;
+
+        // Gọi phương thức getUser() với userId không tồn tại
+        // Đảm bảo rằng phương thức ném ra ngoại lệ UserNotFoundException
+        $this->expectException(UserNotFoundException::class);
+        $controller->getUser($userId);
+  }
+
+
