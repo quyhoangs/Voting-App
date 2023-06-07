@@ -1,0 +1,99 @@
+use Illuminate\Foundation\Testing\TestCase;
+
+class MyTest extends TestCase
+{
+    public function setUp(): void
+    {
+        parent::setUp();
+        // Tạo dữ liệu test ở đây
+    }
+
+    public function tearDown(): void
+    {
+        // Loại bỏ dữ liệu test ở đây
+        parent::tearDown();
+    }
+
+    public function testExample()
+    {
+        // Phương thức kiểm tra của bạn
+    }
+}
+
+
+use Illuminate\Foundation\Testing\TestCase;
+use Illuminate\Support\Facades\DB;
+
+class MyTest extends TestCase
+{
+    public function setUp(): void
+    {
+        parent::setUp();
+        DB::beginTransaction();
+        // Tạo dữ liệu test ở đây
+    }
+
+    public function tearDown(): void
+    {
+        // Loại bỏ dữ liệu test ở đây
+        DB::rollBack();
+        parent::tearDown();
+    }
+
+    public function testExample()
+    {
+        // Phương thức kiểm tra của bạn
+    }
+}
+
+
+
+- database
+  - sql
+    - path_to_your_sql_file.sql
+
+php artisan make:migration run_sql_file
+  
+  use Illuminate\Database\Migrations\Migration;
+
+class RunSqlFile extends Migration
+{
+    public function up()
+    { 
+        $sqlFile = database_path('sql/data.sql');
+        $sql = file_get_contents($sqlFile);
+        DB::unprepared($sql);
+    }
+
+    public function down()
+    {
+        // Không cần thực hiện down() trong trường hợp này
+    }
+}
+
+
+use Illuminate\Foundation\Testing\TestCase;
+use Illuminate\Support\Facades\Artisan;
+
+class MyTest extends TestCase
+{
+    public function setUp(): void
+    {
+        parent::setUp();
+        Artisan::call('migrate', ['--path' => 'database/migrations']);
+    }
+
+    public function tearDown(): void
+    {
+        Artisan::call('migrate:rollback', ['--path' => 'database/migrations']);
+        parent::tearDown();
+    }
+
+    public function testExample()
+    {
+        // Phương thức kiểm tra của bạn
+    }
+}
+
+
+
