@@ -39,3 +39,21 @@ dd($test2);
      khi bạn sử dụng shouldReceive() để giả lập phương thức myMethod() trong test case, 
      bạn đang thực hiện giả lập phương thức đó, không phải thực thi thực tế phương thức myMethod().
 ==> Vì vậy, khi bạn chạy test case, phương thức myMethod() thực tế không được gọi và dd($test2) không bao giờ được thực thi.Tuy nhiên bài test sẻ pass
+
+
+    /** @test */
+    public function testmockDataWithFalse()
+    {
+        $dataMock = true;
+
+        $mock = Mockery::mock('alias:App\Http\Controllers\YourController');
+        $mock->shouldReceive('myMethod')
+            ->andReturn($dataMock);
+
+        $result = $mock->myMethod();
+
+
+
+        $this->assertEquals($dataMock, $result);
+
+    }
