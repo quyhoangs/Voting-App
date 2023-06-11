@@ -1,0 +1,41 @@
+    public function mockDataWithTrueTest2()
+    {
+        $mockController = Mockery::mock(YourController::class)
+            ->makePartial();
+
+        $mockController->shouldReceive('myMethod')
+            ->andReturn($test2 = true);
+
+        // Gọi phương thức để kiểm tra
+        $result = $mockController->myMethod();
+
+        // Kiểm tra kết quả
+        $this->assertEquals('Hello world', $result);
+
+        Mockery::close();
+    }
+    
+    
+        public function myMethod()
+    {
+        try {
+
+            $test = true ;
+
+            if($test){
+                $a = 2 ;
+            }
+            $test2 = false;
+dd($test2);
+            if($test2){
+                return 'Hello word';
+            }
+
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+    
+     khi bạn sử dụng shouldReceive() để giả lập phương thức myMethod() trong test case, 
+     bạn đang thực hiện giả lập phương thức đó, không phải thực thi thực tế phương thức myMethod().
+==> Vì vậy, khi bạn chạy test case, phương thức myMethod() thực tế không được gọi và dd($test2) không bao giờ được thực thi.Tuy nhiên bài test sẻ pass
