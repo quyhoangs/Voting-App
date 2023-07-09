@@ -5,3 +5,21 @@ $groups = ($user && ($user instanceof User))
         return $group->show;
     })->values()
     : [];
+
+Hoặc
+// Kiểm tra nếu không có "plans" hoặc "groups"
+if ($groups->isEmpty()) {
+    // Xử lý khi không có "plans" hoặc "groups"
+} else {
+    // Xử lý khi có "plans" và "groups"
+    foreach ($groups as $group) {
+        if ($group->plans->isEmpty()) {
+            // Xử lý khi không có "plans" liên kết với "group"
+        } else {
+            // Xử lý khi có "plans" liên kết với "group"
+            foreach ($group->plans as $plan) {
+                // Thực hiện các thao tác với "plan"
+            }
+        }
+    }
+}
