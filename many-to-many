@@ -1,25 +1,72 @@
-$groups = ($user && ($user instanceof User))
-    ? $user->groups()->with(['plans' => function ($query) {
-        $query->where('active', true);
-    }])->get()->filter(function (Group $group) {
-        return $group->show;
-    })->values()
-    : [];
+              <tr>
+                <th class="text-left" width="10%">グループID</th>
+                <th class="text-left" width="20%">グループ名</th>
+                <th class="text-left" width="30%">ユーザー権限</th>
+                <th class="text-left" width="20%">Active</th>
+                <th class="text-left" width="20%"></th>
+                <th class="text-left" width="20%">Created At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="group in groups" :key="group.id">
+                <td>{{ group.slug }}</td>
+                <td>{{ group.name }}</td>
+                <td>{{ group.pivot_group_role_name }}</td>
+                <td>{{ group.pivot.active }}</td>
+                <td>
+                  <NbsrLink @click="handleChangePlan(group.id)">Change
+                    Plan</NbsrLink>
+                </td>
+                <td>{{ group.pivot.created_at }}</td>
+              </tr>
 
-Hoặc
-// Kiểm tra nếu không có "plans" hoặc "groups"
-if ($groups->isEmpty()) {
-    // Xử lý khi không có "plans" hoặc "groups"
-} else {
-    // Xử lý khi có "plans" và "groups"
-    foreach ($groups as $group) {
-        if ($group->plans->isEmpty()) {
-            // Xử lý khi không có "plans" liên kết với "group"
-        } else {
-            // Xử lý khi có "plans" liên kết với "group"
-            foreach ($group->plans as $plan) {
-                // Thực hiện các thao tác với "plan"
-            }
-        }
+    Route::get('plan/{groupId}',function($groupId){
+        dd($groupId);
+        return view('plans.detail',compact('groupId'));
+    })->name('plan.detail');
+
+
+class Plan extends Model
+{
+    use HasFactory;
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_plan')
+                    ->withTimestamps();
     }
 }
+
+//group
+    public function plans()
+    {
+        return $this->belongsToMany(Plan::class, 'group_plans')
+                    ->withTimestamps();
+    }
+
+    //activePlan with pivot
+    public function activePlans()
+    {
+        return $this->plans()
+        ->wherePivot('active', true)
+        ->withPivot('active', 'created_at');
+    }
+
+
+
+        $group = $request->route('group');
+        $user = $request->user();
+        $groupUser = ($group && ($group instanceof Group) && $user)
+            ? GroupUser::where([
+                'group_id' => $group->id,
+                'user_id' => $user->id,
+            ])->first()
+            : null;
+            $groups = ($user && ($user instanceof User))
+            ? $user->groups()
+                   ->with(['activePlans' => function ($query) {
+                       $query->orderBy('created_at', 'desc');
+                   }])
+                   ->where('show', true)
+                   ->get()
+            : [];
