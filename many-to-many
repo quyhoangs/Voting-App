@@ -1,0 +1,7 @@
+$groups = ($user && ($user instanceof User))
+    ? $user->groups()->with(['plans' => function ($query) {
+        $query->where('active', true);
+    }])->get()->filter(function (Group $group) {
+        return $group->show;
+    })->values()
+    : [];
